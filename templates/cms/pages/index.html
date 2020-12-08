@@ -1,0 +1,61 @@
+{% extends "cms/pages/base.html" %}
+
+{% block content %}
+    {% include "cms/components/search.html" %}
+{% endblock content %}
+
+{% block extra_js %}
+    {% include "cms/js/tag_selector.js.html" %}
+    <script type="text/javascript">
+        const $search_form = $('#{{ htmls.search.id.form }}')
+        const $search_result = $("#{{ htmls.search.id.result }}")
+        const paging_button = "button[name='{{ htmls.paging.name.button }}']"
+
+        // 検索結果の更新
+        $search_form.submit(function (event) {
+            // default の動作を止める
+            event.preventDefault();
+            // 選択したタグの情報を集めて form に追加する
+            const $inputs = get_tag_inputs();
+            $inputs.forEach(function ($input) {
+                $search_form.append($input)
+            })
+            // Ajax で更新
+            $.ajax({
+                url: "{% url 'cms:search_ajax' 1 %}",
+                method: $search_form.prop("method"),
+                // 良い感じにデータ整形をしてもらう
+                data: $search_form.serialize(),
+                timeout: 10000,
+                dataType: "text",
+            }).done(function (data) {
+                $search_result.html(data);
+            })
+            // 行儀よく
+            $inputs.forEach(function ($input) {
+                $input.remove()
+            })
+        })
+        // ページ選択
+        $(document).on('click', paging_button, function () {
+            // 選択したタグの情報
+            const $inputs = get_tag_inputs();
+            $inputs.forEach(function ($input) {
+                $search_form.append($input)
+            });
+            const next_page = $(this).val()
+            $.ajax({
+                url: "{% url 'cms:search_ajax' 0 %}".replace("0", next_page),
+                method: $search_form.prop("method"),
+                data: $search_form.serialize(),
+                timeout: 10000,
+                dataType: "text",
+            }).done(function (data) {
+                $search_result.html(data);
+            });
+            $inputs.forEach(function ($input) {
+                $input.remove()
+            })
+        })
+    </script>
+{% endblock %}

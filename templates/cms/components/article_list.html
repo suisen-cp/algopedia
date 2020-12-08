@@ -1,0 +1,77 @@
+<div id="{{ htmls.search.id.result }}">
+    <table class="table table-striped table-bordered" style="table-layout: fixed">
+        <thead>
+        <tr>
+            <input type="hidden"
+                   form="{{ htmls.search.id.form }}"
+                   value="{{ search_or_order|default:"search" }}"
+                   name="search_or_order"
+                   id="{{ htmls.search.id.search_or_order }}">
+            {% if not skip_author %}
+                {% include "cms/components/article_list_th.html" with name="author__user__username" label="執筆者" %}
+            {% endif %}
+            {% include "cms/components/article_list_th.html" with name="title"      label="タイトル" %}
+            {% include "cms/components/article_list_th.html" with name="fav_num"    label="お気に入り数" %}
+            {% include "cms/components/article_list_th.html" with name="articlecategory__category" label="分野, タグ" %}
+            {% include "cms/components/article_list_th.html" with name="updated_at" label="最終更新日時" %}
+            {% if has_authority %}
+                <th scope="col">操作</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in post_list %}
+            <tr>
+                {% if not skip_author %}
+                    <th scope="row">
+                        <a href="{% url "cms:user_page" article.author.user.id %}" class="blink">
+                            {{ article.author.user.username }}
+                        </a>
+                    </th>
+                {% endif %}
+                <td><a href="{% url 'cms:article_view' article.article_id %}">{{ article.title }}</a></td>
+                <td>{{ article.fav_num }}</td>
+                <td>
+                    <div class="dropdown open">
+                        <div class="dropdown-toggle"
+                             data-toggle="dropdown"
+                             aria-haspopup="true"
+                             aria-expanded="false">
+                            {{ article.articlecategory.category }}
+                        </div>
+                        <div class="dropdown-menu">
+                            {% for tag in article.articletags_set.all %}
+                                <span class="dropdown-item-text">{{ tag.tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </td>
+                <td>{{ article.updated_at }}</td>
+                {% if has_authority %}
+                    <td>
+                        <button type="button"
+                                class="btn btn-primary"
+                                onclick="
+                                        location.href='{% url 'cms:article_edit' article.article_id %}'
+                                        "
+                        >
+                            編集
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger"
+                                onclick="
+                                        if (confirm('本当に削除しますか？')) {
+                                        location.href='{% url "cms:article_del" article.article_id %}'
+                                        }
+                                        "
+                        >
+                            削除
+                        </button>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% include "cms/components/paging.html" %}
+</div>

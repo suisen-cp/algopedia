@@ -1,0 +1,88 @@
+{% extends "cms/pages/base.html" %}
+
+{% block content %}
+    <div class="mtb">
+        {% if user.is_superuser %}
+            <span class="badge badge-danger">Admin</span>
+        {% endif %}
+        <h2>@{{ user.username }} のページ</h2>
+    </div>
+
+    {# dummy form #}
+    <form action="" method="get" id="{{ htmls.search.id.form }}">{% csrf_token %}</form>
+
+    <div class="row">
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt class="col-sm-12">ユーザー名</dt>
+                <dd class="col-sm-12">@{{ user.username }}</dd>
+
+                <dt class="col-sm-12">登録日時</dt>
+                <dd class="col-sm-12">{{ user.date_joined }}</dd>
+
+                <dt class="col-sm-12">お気に入りされた数</dt>
+                <dd class="col-sm-12">{{ user.liked_num }}</dd>
+
+                <dt class="col-sm-12">書いた記事の数</dt>
+                <dd class="col-sm-12">{{ user.author_articles.count }}</dd>
+
+                <dt class="col-sm-12">分野</dt>
+                <dd class="col-sm-12">
+                    <ul>
+                        {% for category_count in user.category_counts %}
+                            <li>{{ category_count.category }}: {{ category_count.count }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+
+                <dt class="col-sm-12">タグ</dt>
+                <dd class="col-sm-12">
+                    <ul>
+                        {% for tag_count in user.tag_counts %}
+                            <li>{{ tag_count.tag }}: {{ tag_count.count }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-9">
+            <h3>執筆記事一覧</h3>
+            {% include "cms/components/article_list.html" %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        const $search_form = $('#{{ htmls.search.id.form }}')
+        const $search_result = $("#{{ htmls.search.id.result }}")
+        const paging_button = "button[name='{{ htmls.paging.name.button }}']"
+
+        // 更新
+        $search_form.submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "{% url 'cms:user_page_ajax' user.id 1 %}",
+                method: $search_form.prop("method"),
+                data: $search_form.serialize(),
+                timeout: 10000,
+                dataType: "text",
+            }).done(function (data) {
+                $search_result.html(data);
+            })
+        })
+        // ページ選択
+        $(document).on('click', paging_button, function () {
+            const next_page = $(this).val()
+            $.ajax({
+                url: "{% url 'cms:user_page_ajax' user.id 0 %}".replace("0", next_page),
+                method: $search_form.prop("method"),
+                data: $search_form.serialize(),
+                timeout: 10000,
+                dataType: "text",
+            }).done(function (data) {
+                $search_result.html(data);
+            });
+        })
+    </script>
+{% endblock %}

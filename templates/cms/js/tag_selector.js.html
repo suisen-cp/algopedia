@@ -1,0 +1,64 @@
+<script type="text/javascript">
+    const $tag_input = $("#{{ htmls.tag.id.input }}");
+    const $tag_select_button = $("#{{ htmls.tag.id.select_button }}")
+    const $tag_datalist = $("#{{ htmls.tag.id.datalist }}")
+    const $tag_ul = $("#{{ htmls.tag.id.selected_tags }}")
+    const tag_button = "button[name='{{ htmls.tag.name.deselect_button }}']"
+
+    // タグの選択追加
+    $tag_select_button.click(function () {
+        // 追加するタグ
+        const additional_tag = $tag_input.val().trim();
+        // 既に追加済みであれば処理は行わない
+        if (additional_tag && !get_tag_names().includes(additional_tag)) {
+            $.ajax({
+                url: "{% url 'cms:tag_add_ajax' "@" %}".replace("@", additional_tag),
+                method: "GET",
+                timeout: 10000,
+            }).done(function (data) {
+                // タグを追加
+                $tag_ul.append(data);
+                // タグの自動補完のリストから削除 (disable 属性を付与)
+                $tag_datalist.children(`option[value="${additional_tag}"]`).attr('disabled', true);
+            });
+        }
+        // 入力を空にする
+        $tag_input.val('');
+    })
+
+    // タグの選択解除
+    const del_tag = function(tag) {
+        $tag_ul.children(`li[value="${tag}"]`).remove();
+        // タグの自動補完のリストに追加 (disabled 属性を消す)
+        $tag_datalist.children(`option[value="${tag}"]`).removeAttr('disabled')
+    }
+
+    // クリックでタグの選択解除
+    $(document).on('click', tag_button, function () {
+        del_tag($(this).val());
+    })
+
+    // 選択したタグを集める
+    const get_tag_names = function () {
+        const tags = []
+        $(tag_button).each(function (i, o) {
+            tags.push(o.value)
+        });
+        console.log(tags)
+        return tags;
+    }
+    // 選択したタグの情報を載せて送るための hidden な input 要素を追加
+    const get_tag_inputs = function () {
+        // 追加した要素は掃除しないと html が膨れ上がるので生成した input 要素のリストを返す
+        // 使い終わったら必ず remove で破棄する
+        const $inputs = [];
+        $(tag_button).each(function (i, o) {
+            $inputs.push($('<input />', {
+                type: 'hidden',
+                name: '{{ htmls.tag.name.selected_tags }}',
+                value: o.value
+            }))
+        });
+        return $inputs
+    }
+</script>

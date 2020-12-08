@@ -1,0 +1,7 @@
+<button type="submit"
+        class="btn btn-sm btn-light"
+        style="padding:0"
+        form="{{ htmls.search.id.form }}"
+        onclick="$('#{{ htmls.search.id.search_or_order }}').val('{{ asc|yesno:",-"|add:name }}')"
+>{% if asc %}&and;{% else %}&or;{% endif %}
+</button>

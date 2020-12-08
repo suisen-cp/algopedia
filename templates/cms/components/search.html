@@ -1,0 +1,37 @@
+<div class="card mtb">
+    <div class="card-header"><h2>記事検索</h2></div>
+    <div class="card-body">
+        <form action="" method="get" id="{{ htmls.search.id.form }}">
+            {% csrf_token %}
+            {% include "cms/components/text_input.html" with name="username" value=article.author.user.username placeholder="執筆者 ('@'は不要です)" %}
+            {% include "cms/components/title_input.html" %}
+            {% include "cms/components/category_selector.html" %}
+            {% include "cms/components/tag_selector.html" %}
+            {% if request.user.is_authenticated %}
+                {% include "cms/components/search_checkbox.html" with value="author" statement="自分の書いた記事のみを表示する" %}
+                {% include "cms/components/search_checkbox.html" with value="fav" statement="お気に入りの記事のみを表示する" %}
+                {% include "cms/components/search_checkbox.html" with value="read" statement="最近閲覧した記事のみを表示する" %}
+            {% endif %}
+            <div class="form-group row justify-content-center">
+                <button type="submit"
+                        class="col-md-8 btn btn-info"
+                        name="search"
+                        onclick="$('#{{ htmls.search.id.search_or_order }}').val('search')">
+                    検索
+                </button>
+            </div>
+            <div class="form-group row justify-content-center">
+                <button type="reset"
+                        class="col-md-8 btn btn-secondary"
+                        name="search"
+                        onclick="$(tag_button).each(function (i, o) {del_tag(o.value)});">
+                    検索条件をリセット
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="mtb">
+    <h2>検索結果</h2>
+    {% include "cms/components/article_list.html" %}
+</div>

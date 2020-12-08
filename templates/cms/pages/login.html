@@ -1,0 +1,27 @@
+{% extends "cms/pages/base.html" %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header"><h3>ログイン</h3></div>
+        <div class="card-body">
+            {% if errors %}
+                <div class="alert alert-danger" role="alert">
+                    <ul>
+                        {% for err in errors %}
+                            <li>{{ err }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <form action="{% url 'cms:login' %}" method="post">
+                {% csrf_token %}
+                {% include "cms/components/text_input.html" with name="username" label="ユーザー名" autofocus=True required=True %}
+                {% include "cms/components/password_input.html" with name="password" label="パスワード" %}
+                <div class="form-group row justify-content-center">
+                    <button type="submit" class="col-md-6 btn btn-primary">Login</button>
+                </div>
+            </form>
+            <p>まだユーザー登録してない場合は <a href="{% url 'cms:signup' %}">Sign Up</a> からユーザー登録をしてください</p>
+        </div>
+    </div>
+{% endblock %}

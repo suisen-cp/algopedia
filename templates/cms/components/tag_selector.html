@@ -1,0 +1,38 @@
+<div class="form-group row">
+    <label for="{{ htmls.tag.id.input }}" class="col-md-2 col-form-label">
+        Tag
+    </label>
+    <div class="col-md-9" style="padding-left: 0; padding-right: 0">
+        <ul class="row"
+            id="{{ htmls.tag.id.selected_tags }}"
+            style="list-style: none">
+            {% for init_tag in article.get_tags %}
+                {% include "cms/components/tag.html" with tag=init_tag.tag %}
+            {% endfor %}
+        </ul>
+        <div class="input-group">
+            <input type="text"
+                   autocomplete="on"
+                   list="{{ htmls.tag.id.datalist }}"
+                   class="form-control"
+                   placeholder="タグ"
+                   id="{{ htmls.tag.id.input }}">
+            <div class="input-group-append">
+                <button type="button"
+                        class="input-group-text"
+                        id="{{ htmls.tag.id.select_button }}"
+                >Add Tag</button>
+            </div>
+            <datalist id="{{ htmls.tag.id.datalist }}">
+                {% for tag in tags %}
+                    <option label="記事数: {{ tag.article_num }}"
+                            value="{{ tag.tag }}"
+                            {% if tag in init_selected_tags %}
+                            disabled="disabled"
+                            {% endif %}
+                    ></option>
+                {% endfor %}
+            </datalist>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+ca-certificates==2020.6.20
+certifi==2020.6.20
+django==2.2
+django-bootstrap4==1.1.1
+openssl==1.1.1h
+pip==20.2.4
+python==3.6.12
+python abi==3.6
+pytz==2020.1
+setuptools==50.3.0
+sqlite==3.33.0
+sqlparse==0.4.1
+vc==14.1
+vs2015 runtime==14.16.27012
+wheel==0.35.1
+wincertstore==0.2
+zlib==1.2.11

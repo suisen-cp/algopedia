@@ -1,0 +1,8 @@
+a.blink, a.blink:visited, a.blink:active {
+    color: #000000 !important;
+}
+
+.mtb {
+    margin-top: 2em !important;
+    margin-bottom: 2em !important;
+}

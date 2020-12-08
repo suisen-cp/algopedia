@@ -1,0 +1,15 @@
+<th scope="col">
+    <div class="container-fluid">
+        <div class="row justify-content-between">
+            <div class="align-self-center">
+                {% with default_label=name|capfirst %}
+                {{ label|default:default_label }}
+                {% endwith %}
+            </div>
+            <div class="btn-group-vertical">
+                {% include "cms/components/order_button.html" with name=name asc=True %}
+                {% include "cms/components/order_button.html" with name=name asc=False %}
+            </div>
+        </div>
+    </div>
+</th>

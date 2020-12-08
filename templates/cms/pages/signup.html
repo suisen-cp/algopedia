@@ -1,0 +1,20 @@
+{% extends "cms/pages/base.html" %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header"><h3>ユーザー登録</h3></div>
+        <div class="card-body">
+            {% include "cms/components/form_errors.html" with form=form %}
+            <form action="{% url 'cms:signup' %}" method="post">
+                {% csrf_token %}
+                {% include "cms/components/text_input.html" with name="username" label="ユーザー名" autofocus=True required=True %}
+                {% include "cms/components/password_input.html" with name="password1" label="パスワード" %}
+                {% include "cms/components/password_input.html" with name="password2" label="パスワード (再入力)" %}
+                <div class="form-group row justify-content-center">
+                    <button type="submit" class="col-md-6 btn btn-primary">Sign Up</button>
+                </div>
+            </form>
+            <p>既にユーザー登録が済んでいる場合は <a href="{% url 'cms:login' %}">Sign In</a> からログインしてください</p>
+        </div>
+    </div>
+{% endblock %}

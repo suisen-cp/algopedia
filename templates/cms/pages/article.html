@@ -1,0 +1,65 @@
+{% extends "cms/pages/base.html" %}
+
+{% block content %}
+    <div class="card mtb">
+        <div class="card-header">
+            <div class="container">
+                <p class="text-right">執筆者:
+                    <a href="{% url "cms:user_page" article.author.user.id %}">@{{ article.author.user }}</a>
+                </p>
+                <p class="text-right">作成: {{ article.created_at }}</p>
+                <p class="text-right">更新: {{ article.updated_at }}</p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-md-10">
+                    <h2>{{ article.title }}
+                        <span id="{{ htmls.fav.id.info }}">{% include "cms/components/fav.html" %}</span>
+                    </h2>
+                </div>
+                <div class="col-md-2" style="padding-left: 0; padding-right: 0">
+                    {% if article.author.user == request.user %}
+                        <button type="button"
+                                class="btn btn-sm btn-outline-dark"
+                                onclick="location.href='{% url "cms:article_edit" article.article_id %}'">
+                            記事を編集する
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row card-subtitle text-sm text-muted container mb-2">
+                分野: {{ article.articlecategory.category.category }}
+            </div>
+            <div class="row card-subtitle text-sm text-muted container mb-2">
+                タグ:
+                {% for tag_name in article.get_tag_names %}
+                    {{ tag_name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            {{ article.content }}
+        </div>
+    </div>
+    <div class="form-group row justify-content-center mtb">
+        <button type="button"
+                class="col-md-6 btn btn-secondary"
+                onclick="history.go(-1);">
+            戻る
+        </button>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $(document).on('click', "#{{ htmls.fav.id.toggle_button }}", function () {
+            $.ajax({
+                url: "{% url 'cms:fav_ajax' article_id=article.article_id|default:0 %}",
+                method: "GET",
+                timeout: 10000,
+            }).done(function (data) {
+                $("#{{ htmls.fav.id.info }}").html(data)
+            });
+        })
+    </script>
+{% endblock %}

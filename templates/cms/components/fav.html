@@ -1,0 +1,8 @@
+{% if request.user.is_authenticated %}
+    <button type="button"
+            class="btn btn-sm btn-outline-{{ fav|yesno:"danger,success" }}"
+            id="{{ htmls.fav.id.toggle_button }}">
+        お気に入り{{ fav|yesno:"解除,登録" }}
+    </button>
+{% endif %}
+<span style="font-size: 0.5em">★: {{ article.fav_num }}</span>

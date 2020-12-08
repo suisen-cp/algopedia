@@ -1,0 +1,15 @@
+<div class="form-group row">
+    <label for="id_{{ name }}_text_input" class="col-md-2 col-form-label">
+        {% with default_label=name|capfirst %}
+        {{ label|default:default_label }}
+        {% endwith %}
+    </label>
+    <input type="text"
+           name="{{ name }}"
+           {{ autofocus|default:False|yesno:"autofocus," }}
+           {{ required|default:False|yesno:"required," }}
+           class="col-md-9 form-control"
+           value="{{ value }}"
+           placeholder="{{ placeholder }}"
+           id="id_{{ name }}_text_input">
+</div>

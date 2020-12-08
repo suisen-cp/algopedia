@@ -1,0 +1,39 @@
+<nav class="navbar navbar-dark bg-secondary">
+    <ul class="nav">
+        <li class="nav-item">
+            <a href="{% url 'cms:index' %}" class="nav-link">
+                <h1 style="font-family: 'Century'; color: #000000">Algopedia</h1>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav">
+        {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cms:logout' %}">
+                    <button type="button" class="btn btn-primary">Sign out</button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cms:article_add' %}">
+                    <button type="button" class="btn btn-info">新しい記事を書く</button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cms:user_page' request.user.id %}">
+                    <button type="button" class="btn btn-info">マイページ</button>
+                </a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cms:login' %}">
+                    <button type="button" class="btn btn-primary">Sign in</button>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cms:signup' %}">
+                    <button type="button" class="btn btn-info">Sign up</button>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

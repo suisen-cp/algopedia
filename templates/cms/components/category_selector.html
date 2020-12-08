@@ -1,0 +1,18 @@
+<div class="form-group row">
+    <label for="{{ htmls.category.id.input }}" class="col-md-2 col-form-label">
+        Category
+    </label>
+    <input type="text"
+           name="category"
+           autocomplete="on"
+           list="{{ htmls.category.id.datalist }}"
+           class="col-md-9 form-control"
+           value="{{ article.articlecategory.category.category }}"
+           placeholder="分野"
+           id="{{ htmls.category.id.input }}">
+    <datalist id="{{ htmls.category.id.datalist }}">
+        {% for category in categories %}
+            <option value="{{ category.category }}" label="記事数: {{ category.article_num }}"></option>
+        {% endfor %}
+    </datalist>
+</div>

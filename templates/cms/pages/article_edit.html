@@ -1,0 +1,75 @@
+{% extends "cms/pages/base.html" %}
+
+{% block title %}記事の{{ article|yesno:"編集,追加" }}{% endblock title %}
+
+{% block content %}
+    <h4 class="mt-4 mb-5 border-bottom">記事の{{ article|yesno:"編集,追加" }}</h4>
+    {% url 'cms:article_edit' article_id=article.article_id as url_edit %}
+    {% url 'cms:article_add' as url_add %}
+    <form action="{% if article %}{{ url_edit }}{% else %}{{ url_add }}{% endif %}"
+          method="post"
+          id="{{ htmls.article.id.form }}">
+        {% csrf_token %}
+        <div id="id_title_err"></div>
+        {% include "cms/components/title_input.html" %}
+        <div id="id_category_err"></div>
+        {% include "cms/components/category_selector.html" %}
+        <div id="id_tag_err"></div>
+        {% include "cms/components/tag_selector.html" %}
+        <div id="id_content_err"></div>
+        {% include "cms/components/article_input.html" %}
+        <div class="form-group row justify-content-center">
+            <button type="submit" class="col-md-6 btn btn-primary">保存</button>
+        </div>
+    </form>
+    <div class="form-group row justify-content-center">
+        <button type="button"
+                class="col-md-6 btn btn-secondary"
+                onclick="history.go(-1);"
+        >保存せずに戻る
+        </button>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    {% include "cms/js/tag_selector.js.html" %}
+    <script type="text/javascript">
+        $('#{{ htmls.article.id.form }}').submit(function (event) {
+            // default の動作を止める
+            event.preventDefault();
+            // form 情報
+            const form = $(this);
+            // 選択したタグの情報を集めて form に追加する
+            const $inputs = get_tag_inputs();
+            $inputs.forEach(function ($input) {
+                form.append($input)
+            })
+            $.ajax({
+                url: form.prop("action"),
+                method: form.prop("method"),
+                data: form.serialize(),
+                timeout: 10000,
+                dataType: "text",
+            }).done(function (data) {
+                console.log(data)
+                const dict = $.parseJSON(data)
+                console.log(dict)
+                if (dict.status === 0) {
+                    history.go(-1)
+                    {#location.href = "{% url "cms:user_page" user_id=request.user.id %}"#}
+                } else if (dict.status === 1) {
+                    const errors = dict.err
+                    $("#id_title_err").html(errors.title)
+                    $("#id_category_err").html(errors.category)
+                    $("#id_tag_err").html(errors.tag)
+                    $("#id_content_err").html(errors.content)
+                } else {
+                    alert("不明なエラー")
+                }
+            })
+            $inputs.forEach(function ($input) {
+                $input.remove()
+            })
+        })
+    </script>
+{% endblock %}
